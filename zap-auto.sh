@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ $(id -u) == 0 ]]; then
-	echo -e "O script NÃO deve ser executado como root, pois:\n\n - Poderá ocorrer erros ao executar certos escaneamentos como AjaxSpider devido a limitação de uso com o Firefox para usuários que possuem permissiões Administrativas (root) no dispostivo\n - Poderá comprometer sua máquina em determinadas ocasiões.\n - Entre outras recomendações como o princípio do privilégio mínimo e etc..."
+	echo -e "O script NÃO deve ser executado como root, pois:\n\n - Poderá ocorrer erros ao executar certos escaneamentos como AjaxSpider devido a limitação de uso com o Firefox para usuários que possuem permissiões Administrativas (root) no dispostivo"
 	exit 1
 fi
 
