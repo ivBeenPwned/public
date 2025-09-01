@@ -60,7 +60,7 @@ cmds=(
 	"/usr/bin/nikto -h __DOMAIN__ -maxtime 1h -Format json -output ${PWD}/Scans/__DOMAIN__/nikto.json"
 	"/usr/bin/whatweb --plugins=Apache,Nginx,Cloudflare,F5-BIGIP,Title,X-Powered-By,PHP,Python,Perl,Ruby,WordPress,Joomla,Drupal,Magento,Shopify,Laravel,Symfony,Django,Jetty,OpenResty,Google-Analytics,jQuery,Bootstrap,Modernizr,HTML5,HTTPServer,Meta-Author __DOMAIN__ --log-verbose=${PWD}/Scans/__DOMAIN__/WhatWeb.txt"
 	"/usr/bin/nuclei -target __DOMAIN__ -json-export ${PWD}/Scans/__DOMAIN__/nuclei.json -no-color -silent"
-	"/usr/bin/feroxbuster -u __DOMAIN__ --user-agent 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -o ${PWD}/Scans/__DOMAIN__/ferox.txt --filter-status 404 --redirects --no-recursion --dont-extract-links"
+	"/usr/bin/feroxbuster -u __DOMAIN__ --user-agent 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -o ${PWD}/Scans/__DOMAIN__/ferox.txt --filter-status 404 --redirects --no-recursion --dont-extract-links --quiet"
 )
 
 MAX_JOBS=4
