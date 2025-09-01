@@ -27,7 +27,7 @@ clear_on_exit(){
 }
 trap clear_on_exit SIGINT
 
-tools=("wc" "wafw00f" "naabu" "nuclei" "httpx" "theHarvester" "amass" "nikto" "whatweb" "dirsearch") 
+tools=("wc" "wafw00f" "naabu" "nuclei" "httpx" "theHarvester" "amass" "nikto" "whatweb" "feroxbuster") 
 for i in "${tools[@]}"; do
         [[ $(command -v ${i}) ]] || { echo -e "${Subli}Ferramenta não encontrada no sistema${Off} --> ${BRed}${i}${Off}"; exit 1; }
 done
