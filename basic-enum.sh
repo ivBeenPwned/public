@@ -39,8 +39,8 @@ while IFS= read -r domain; do
 	[[ "${domain}" =~ ( |$'\t') ]] && { echo -e "${BWhite}${domain}${Off} *contém tabulações ou espaço em branco"; exit 1; }
 done < ${file}
 
-Seclist_raft=$(locate raft-large-directories.txt)
-[[ -z ${Seclist_raft} ]] && { echo -e "Diretório '${Subli}Seclist${Off}' não encontrado --> Atualizar: ${Subli}locate${Off} (${Besp}sudo updatedb${Off})"; exit 1; }
+#Seclist_raft=$(locate raft-large-directories.txt)
+#[[ -z ${Seclist_raft} ]] && { echo -e "Diretório '${Subli}Seclist${Off}' não encontrado --> Atualizar: ${Subli}locate${Off} (${Besp}sudo updatedb${Off})"; exit 1; }
 
 for i in 5 4 3 2 1; do
 	echo -ne "\r[!] Iniciando em ${FRed}${BWhite}${i}${Off}"
@@ -60,7 +60,7 @@ cmds=(
 	"/usr/bin/nikto -h __DOMAIN__ -maxtime 1h -Format json -output ${PWD}/Scans/__DOMAIN__/nikto.json"
 	"/usr/bin/whatweb --plugins=Apache,Nginx,Cloudflare,F5-BIGIP,Title,X-Powered-By,PHP,Python,Perl,Ruby,WordPress,Joomla,Drupal,Magento,Shopify,Laravel,Symfony,Django,Jetty,OpenResty,Google-Analytics,jQuery,Bootstrap,Modernizr,HTML5,HTTPServer,Meta-Author __DOMAIN__ --log-verbose=${PWD}/Scans/__DOMAIN__/WhatWeb.txt"
 	"/usr/bin/nuclei -target __DOMAIN__ -json-export ${PWD}/Scans/__DOMAIN__/nuclei.json -no-color -silent"
-	"/usr/bin/dirsearch -u __DOMAIN__ -w ${Seclist_raft} --no-color -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' --max-time=3600 --format=plain --output=${PWD}/Scans/__DOMAIN__/dirsearch.txt"
+	"/usr/bin/feroxbuster -u __DOMAIN__ --user-agent 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -o ${PWD}/Scans/__DOMAIN__/ferox.txt --filter-status 404 --redirects --no-recursion --dont-extract-links"
 )
 
 MAX_JOBS=4
