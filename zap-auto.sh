@@ -20,7 +20,7 @@ else
 fi
 
 for content in "${URL[@]}"; do
-	if ! [[ "${content}" =~ ^https?:\/\/[a-zA-Z0-9]+\.[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(/.*)?$ ]]; then
+	if ! [[ "${content}" =~ ^https?:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(/.*)?$ ]]; then
 		echo -e "O domínio ${content} passado é inválido. Esquema = http(s)://subdomain.domain.tld/directory"
 		echo -e "Saindo..."
 		exit 1
