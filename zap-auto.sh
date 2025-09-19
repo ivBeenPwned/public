@@ -79,7 +79,7 @@ trap interrupting SIGINT
 #Iniciando o ZAPROXY
 PS_LIST="$(ps aux)"
 PS_ZAP="${PS_LIST##*\/usr\/share\/zaproxy\/}"
-VERSION="${PS_ZAP}:0:10}" #Fallback
+VERSION="${PS_ZAP:0:10}" #Fallback
 PID=$(/usr/bin/pgrep -f "/usr/share/zaproxy/${VERSION}")
 if [[ -z ${PID} ]]; then
 	/usr/bin/zaproxy -daemon -port "${PORT}" -config "api.key=${APIKEY}" 1>${PWD}/zap.log 2>/dev/null &
