@@ -33,7 +33,7 @@ PORT="38080"
 
 clear_on_exit(){
 	PID=$(/usr/bin/pgrep -f "/usr/share/zaproxy/${VERSION}")
-	if ! [[ -z ${PID} ]]; then
+	if [[ -n ${PID} ]]; then
 		/usr/bin/curl -X GET -so /dev/null "${HOST}:${PORT}/JSON/ascan/action/stopAllScans/?apikey=${APIKEY}"
 		/usr/bin/sleep 1
 		/usr/bin/curl -X GET -so /dev/null "${HOST}:${PORT}/JSON/core/action/shutdown/?apikey=${APIKEY}"
