@@ -21,7 +21,7 @@ fi
 
 for content in "${URL[@]}"; do
         if ! [[ "${content}" =~ ^https?:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}(/.*)?$ ]]; then
-                echo -e "O domínio ${content} passado é inválido. Esquema = http(s)://subdomain.domain.tld/directory"
+                echo -e "O domínio ${content} passado é inválido. Esquema = http(s)://[subdomain.]DOMAIN.TLD[/directory]"
                 echo -e "Saindo..."
                 exit 1
         fi
@@ -30,6 +30,8 @@ done
 APIKEY=$(/usr/bin/tr -dc 'a-zA-Z0-9' < /dev/urandom | /usr/bin/fold -w 32 | /usr/bin/head -c 32)
 HOST="http://127.0.0.1"
 PORT="38080"
+
+[[ -z "${API_KEY}" ]] && echo "Chave API não criada" && exit 1
 
 clear_on_exit(){
         PS_LIST="$(ps aux)"
