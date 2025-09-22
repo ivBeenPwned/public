@@ -31,7 +31,7 @@ APIKEY=$(/usr/bin/tr -dc 'a-zA-Z0-9' < /dev/urandom | /usr/bin/fold -w 32 | /usr
 HOST="http://127.0.0.1"
 PORT="38080"
 
-[[ -z "${API_KEY}" ]] && echo "Chave API não criada" && exit 1
+[[ -z "${APIKEY}" ]] && echo "Chave API não criada" && exit 1
 
 clear_on_exit(){
         PS_LIST="$(ps aux)"
