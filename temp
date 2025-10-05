@@ -1,0 +1,103 @@
+#!/system/bin/sh
+#
+# 01nhexpose.sh
+# Expõe /dev /proc /sys e o su do host para um chroot NetHunter instalado via Termux.
+# Ajusta automaticamente entre caminhos comuns de chroot e caminhos comuns do su.
+#
+# USO: coloque em /data/adb/service.d/01nhexpose.sh (Magisk) e chmod 755.
+#
+
+# Se 1, tenta setar SELinux para permissive (temporário). Se 0, não modifica SELinux.
+SET_PERMISSIVE=1
+
+# Lista de caminhos possíveis para o rootfs do NetHunter/Termux. Primeiro que existir será usado.
+CHROOT_CANDIDATES="
+/data/nh/rootfs
+/data/nh
+/data/data/com.termux/files/home/kali-arm64
+/data/data/com.termux/files/home/kali
+/data/data/com.termux/files/home/kali-rootfs
+/data/local/kali-rootfs
+"
+
+# Possíveis localizações do binário 'su' do host (Magisk/stock)
+SU_CANDIDATES="
+/sbin/su
+/data/adb/magisk/su
+/system/xbin/su
+/system/bin/su
+/su
+"
+
+# tempo para esperar before mounting (dá tempo pro filesystem ficar pronto)
+sleep 3
+
+# seleciona CHROOT_PATH
+CHROOT_PATH=""
+for p in $CHROOT_CANDIDATES; do
+  if [ -e "$p" ]; then
+    CHROOT_PATH="$p"
+    break
+  fi
+done
+
+if [ -z "$CHROOT_PATH" ]; then
+  # tenta achar por padrão dentro do home do termux
+  if [ -d "/data/data/com.termux/files/home" ]; then
+    # heurística: se existir 'kali' dentro do home, usa
+    if [ -d "/data/data/com.termux/files/home/kali-arm64" ]; then
+      CHROOT_PATH="/data/data/com.termux/files/home/kali-arm64"
+    elif [ -d "/data/data/com.termux/files/home/kali" ]; then
+      CHROOT_PATH="/data/data/com.termux/files/home/kali"
+    fi
+  fi
+fi
+
+# se ainda vazio, aborta
+if [ -z "$CHROOT_PATH" ]; then
+  exit 0
+fi
+
+# seleciona SU_PATH
+SU_PATH=""
+for s in $SU_CANDIDATES; do
+  if [ -x "$s" ]; then
+    SU_PATH="$s"
+    break
+  fi
+done
+
+# cria diretórios dentro do chroot se necessário
+mkdir -p "$CHROOT_PATH/dev" "$CHROOT_PATH/dev/pts" "$CHROOT_PATH/proc" "$CHROOT_PATH/sys" "$CHROOT_PATH/run" 2>/dev/null || true
+
+# mounts principais (ignora erros, tentativa idempotente)
+mount --bind /dev "$CHROOT_PATH/dev" 2>/dev/null || true
+mount --bind /dev/pts "$CHROOT_PATH/dev/pts" 2>/dev/null || true
+mount --bind /proc "$CHROOT_PATH/proc" 2>/dev/null || true
+mount --bind /sys "$CHROOT_PATH/sys" 2>/dev/null || true
+mount --bind /run "$CHROOT_PATH/run" 2>/dev/null || true
+
+# tenta expor binários úteis (opcional)
+if [ -d /system/bin ]; then
+  mount --bind /system/bin "$CHROOT_PATH/system/bin" 2>/dev/null || true
+fi
+
+# torna su do host visível dentro do chroot se encontrado
+if [ -n "$SU_PATH" ]; then
+  mkdir -p "$CHROOT_PATH/sbin" 2>/dev/null || true
+  mount --bind "$SU_PATH" "$CHROOT_PATH/sbin/su" 2>/dev/null || true
+fi
+
+# permissoes de USB para testes (temporário)
+if [ -d /dev/bus/usb ]; then
+  chmod -R 0777 /dev/bus/usb 2>/dev/null || true
+fi
+
+# tenta setenforce 0 se pedido
+if [ "$SET_PERMISSIVE" = "1" ]; then
+  if command -v setenforce >/dev/null 2>&1; then
+    setenforce 0 2>/dev/null || true
+  fi
+fi
+
+exit 0
