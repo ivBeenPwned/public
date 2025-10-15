@@ -39,6 +39,8 @@ while IFS= read -r domain; do
 	[[ "${domain}" =~ ( |$'\t') ]] && { echo -e "${BWhite}${domain}${Off} *contém tabulações ou espaço em branco"; exit 1; }
 done < ${file}
 
+mapfile -t domains < "${1}"
+
 for i in 5 4 3 2 1; do
 	echo -ne "\r[!] Iniciando em ${FRed}${BWhite}${i}${Off}"
 	sleep 1
@@ -60,7 +62,6 @@ cmds=(
 	"/usr/bin/feroxbuster -u __DOMAIN__ --user-agent 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0' -H 'Accept: */*' -o ${PWD}/Scans/__DOMAIN__/ferox.txt --filter-status 404 --time-limit 90m --redirects --no-recursion --dont-extract-links --quiet"
 )
 
-mapfile -t domains < "${file}"
 MAX_JOBS=4
 
 for c in "${cmds[@]}"; do
